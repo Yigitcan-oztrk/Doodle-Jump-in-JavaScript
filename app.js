@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let platforms = []
     let upTimerId
     let downTimerId
+    let isJumping = true
     function createDoodler() {
         grid.appendChild(doodler)
         doodler.classList.add('doodler')
@@ -54,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function jump() {
         clearInterval(downTimerId)
+        isJumping = true
         upTimerId = setInterval(function () {
             doodlerBottomSpace += 20
             doodler.style.bottom = doodlerBottomSpace + 'px'
@@ -64,14 +66,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function fall() {
         clearInterval(upTimerId)
+        isJumping = false
         downTimerId=setInterval(function(){
             doodlerBottomSpace -= 5
             doodler.style.bottom=doodlerBottomSpace + 'px'
             if(doodlerBottomSpace <=0){
                 gameOver()
             }
+            platforms.forEach(platform =>{
+                if (
+                    (doodlerBottomSpace >= platform.bottom) &&
+                    (doodlerBottomSpace <= platform.bottom+ 15) &&
+                    ((doodlerLeftSpace + 60) >= platform.left) &&
+                    (doodlerLeftSpace <= (platform.left +85))&&
+                    !isJumping
+                  )
+                  {
+                      console.log('landed')
+                      jump()
+                  }
+                })
 
-        })
+        },30)
     }
     function gameOver(){
         console.log('game over')
@@ -79,11 +95,27 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(upTimerId)
         clearInterval(downTimerId)
     }
+
+function control(e){
+    if(e.key ==="ArrowLeft")
+    {
+        //move left
+    }
+    else if(e.key === "ArrowRight"){
+        //move right
+        
+    }
+    else if(e.key === "ArrowUP"){
+        
+        //moveStraight
+    }
+
+}
+
     function start() {
         if (!isGameOver) {
             createPlatforms()
             createDoodler()
-            
             setInterval(movePlatforms, 30)
             jump()
         }
@@ -91,4 +123,5 @@ document.addEventListener('DOMContentLoaded', () => {
     //attach to button
     start()
 })
+
 
